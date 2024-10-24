@@ -8,6 +8,7 @@ package medinovahealthcare;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 /**
@@ -15,12 +16,19 @@ import javax.swing.JOptionPane;
  * @author User
  */
 public class Login extends javax.swing.JFrame {
+    private String role;
 
     /**
      * Creates new form Login
      */
     public Login() {
         initComponents();
+        this.role = "General"; // Or any default value you'd like
+    }
+
+    public Login(String role) {
+        initComponents();
+        this.role = role;
     }
 
     /**
@@ -226,50 +234,62 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_backButtonMouseClicked
 
     private void loginButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginButtonMouseClicked
-        /*String email = editEmail.getText();
-        String password = editPassword.getText();
-        
-        if(editEmail.getText().equals("")){
-            JOptionPane.showMessageDialog(null, "Please fill out email!");
-        }
-        else if(editPassword.getText() .equals("")){
-            JOptionPane.showMessageDialog(null, "Please fill out password!");
-        }
-        
-        try{
+    String email = editEmail.getText(); // Assuming 'editEmail' is your email input field
+    String password = editPassword.getText(); // Assuming 'editPassword' is your password input field
 
-           String query = "SELECT role FROM Users WHERE email = ? AND password = ?";
-           PreparedStatement statement = conn.prepareStatement(query);
-           statement.setString(1, email);
-           statement.setString(2, password);
-           ResultSet resultSet = statement.executeQuery();
-           
-           if(resultSet.next()){
-               String role = resultSet.getString("role");
-               switch(role){
-                   case "Assistent":
-                       AssistentHomeP assistenHome = new AssistentHomeP();
-                       assistenHome.setVisible(true);
-                       this.dispose();
-                       break;
-                   case "Doktor": 
-                       DoctorHomeP doctorHome = new DoctorHomeP();
-                       doctorHome.setVisible(true);
-                       this.dispose();
-                   case "Financa":
-                       this.setVisible(false);
-                       FinanceHomeP financeHome = new FinanceHomeP();
-                       financeHome.setVisible(true);
-               }
-           }
-           else{
-            JOptionPane.showMessageDialog(null, "Wrong username or password!", "Message", JOptionPane.ERROR_MESSAGE);
-        } 
-           
+    // Step 1: Validate input fields
+    if (email.equals("")) {
+        JOptionPane.showMessageDialog(null, "Please fill out email!");
+    } else if (password.equals("")) {
+        JOptionPane.showMessageDialog(null, "Please fill out password!");
+    } else {
+        // Step 2: Connect to the database and check credentials
+        DataBase db = new DataBase();  // Assuming you already have your DataBase class set up
+        Connection conn = db.getConnection();
+
+        try {
+            // Prepare the SQL query to check if the user exists
+            String sql = "SELECT * FROM users WHERE Email = ? AND Password = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email); // Bind email
+            stmt.setString(2, password); // Bind password
+            stmt.setString(3, role);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                 // User exists, and the role matches
+                    JOptionPane.showMessageDialog(null, "Welcome, " + role + "!");
+                    this.setVisible(false);
+                    
+                    // Redirect based on role
+                    if (role.equals("Doctor")) {
+                        DoctorHomeP doctorHome = new DoctorHomeP();
+                        doctorHome.setVisible(true);
+                    } else if (role.equals("Assistant")) {
+                        AssistentHomeP assistantHome = new AssistentHomeP();
+                        assistantHome.setVisible(true);
+                    } else if (role.equals("Finance")) {
+                        FinanceHomeP financeHome = new FinanceHomeP();
+                        financeHome.setVisible(true);
+                    }
+                } else {
+                    // No matching user found
+                    JOptionPane.showMessageDialog(null, "Wrong email, password, or role!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            
+
+            // Close the resources
+            rs.close();
+            stmt.close();
+            db.closeConnection();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Database error!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        catch(Exception e{
-            System.out.println(e.getMessage());
-        }*/
+    }
+
     }//GEN-LAST:event_loginButtonMouseClicked
 
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -324,7 +344,7 @@ public class Login extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Login().setVisible(true);
+                new Login("General").setVisible(true);
             }
         });
     }

@@ -233,20 +233,20 @@ public class Users extends javax.swing.JFrame {
 
     private void asistenPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_asistenPanelMouseClicked
         this.setVisible(false);
-       Login loginFrame = new Login();
+       Login loginFrame = new Login("Assistant");
        loginFrame.setVisible(true);
     }//GEN-LAST:event_asistenPanelMouseClicked
 
     private void doktorPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_doktorPanelMouseClicked
         this.setVisible(false);
-       Login loginFrame = new Login();
+        Login loginFrame = new Login("Doctor");
        loginFrame.setVisible(true);
     }//GEN-LAST:event_doktorPanelMouseClicked
 
     private void financaPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_financaPanelMouseClicked
         this.setVisible(false);
-       Login loginFrame = new Login();
-       loginFrame.setVisible(true);
+        Login loginFrame = new Login("Finance");
+        loginFrame.setVisible(true);
     }//GEN-LAST:event_financaPanelMouseClicked
     
     /**
