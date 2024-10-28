@@ -12,7 +12,7 @@ public class DataBase {
     public Connection getConnection() {
         try {
             // Update with your database name, username, and password
-        String url = "jdbc:mysql://localhost:3306/database_car";
+        String url = "jdbc:mysql://localhost:3306/medinova";
         String user = "xheis";
         String password = "(Xhes3iiI*)";
 

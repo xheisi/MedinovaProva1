@@ -240,8 +240,12 @@ public class Login extends javax.swing.JFrame {
     // Step 1: Validate input fields
     if (email.equals("")) {
         JOptionPane.showMessageDialog(null, "Please fill out email!");
+        editEmail.setText("");
+        editPassword.setText("");
     } else if (password.equals("")) {
         JOptionPane.showMessageDialog(null, "Please fill out password!");
+        editEmail.setText("");
+        editPassword.setText("");
     } else {
         // Step 2: Connect to the database and check credentials
         DataBase db = new DataBase();  // Assuming you already have your DataBase class set up
@@ -249,35 +253,40 @@ public class Login extends javax.swing.JFrame {
 
         try {
             // Prepare the SQL query to check if the user exists
-            String sql = "SELECT * FROM users WHERE Email = ? AND Password = ?";
+            String sql = "SELECT * FROM users WHERE Email = ? AND Password = ?";  // Changed to use 'Email'
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email); // Bind email
             stmt.setString(2, password); // Bind password
-            stmt.setString(3, role);
 
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                 // User exists, and the role matches
-                    JOptionPane.showMessageDialog(null, "Welcome, " + role + "!");
+                // User exists, now check their role
+                String role = rs.getString("Role");  // Fetch the role from the database
+
+                // Step 3: Redirect based on role
+                if (role.equals("Doctor")) {
+                    JOptionPane.showMessageDialog(null, "Welcome, Doctor!");
                     this.setVisible(false);
-                    
-                    // Redirect based on role
-                    if (role.equals("Doctor")) {
-                        DoctorHomeP doctorHome = new DoctorHomeP();
-                        doctorHome.setVisible(true);
-                    } else if (role.equals("Assistant")) {
-                        AssistentHomeP assistantHome = new AssistentHomeP();
-                        assistantHome.setVisible(true);
-                    } else if (role.equals("Finance")) {
-                        FinanceHomeP financeHome = new FinanceHomeP();
-                        financeHome.setVisible(true);
-                    }
-                } else {
-                    // No matching user found
-                    JOptionPane.showMessageDialog(null, "Wrong email, password, or role!", "Error", JOptionPane.ERROR_MESSAGE);
+                    DoctorHomeP doctorHome = new DoctorHomeP();
+                    doctorHome.setVisible(true); // Show Doctor's homepage
+                } else if (role.equals("Assistant")) {
+                    JOptionPane.showMessageDialog(null, "Welcome, Assistant!");
+                    this.setVisible(false);
+                    AssistentHomeP assistantHome = new AssistentHomeP();
+                    assistantHome.setVisible(true); // Show Assistant's homepage
+                } else if (role.equals("Finance")) {
+                    JOptionPane.showMessageDialog(null, "Welcome, Finance team member!");
+                    this.setVisible(false);
+                    FinanceHomeP financeHome = new FinanceHomeP();
+                    financeHome.setVisible(true); // Show Finance homepage
                 }
-            
+            } else {
+                // If no matching user is found
+                JOptionPane.showMessageDialog(null, "Wrong email or password!", "Message", JOptionPane.ERROR_MESSAGE);
+                editEmail.setText("");
+                editPassword.setText("");
+            }
 
             // Close the resources
             rs.close();
@@ -287,6 +296,8 @@ public class Login extends javax.swing.JFrame {
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Database error!", "Error", JOptionPane.ERROR_MESSAGE);
+            editEmail.setText("");
+            editPassword.setText("");
         }
     }
 
