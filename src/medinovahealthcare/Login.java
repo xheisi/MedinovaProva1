@@ -253,7 +253,7 @@ public class Login extends javax.swing.JFrame {
 
         try {
             // Prepare the SQL query to check if the user exists
-            String sql = "SELECT * FROM users WHERE Email = ? AND Password = ?";  // Changed to use 'Email'
+            String sql = "SELECT UserID, Role, DoctorID FROM Users WHERE Email = ? AND Password = ?;";  // Changed to use 'Email'
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, email); // Bind email
             stmt.setString(2, password); // Bind password
@@ -268,7 +268,8 @@ public class Login extends javax.swing.JFrame {
                 if (role.equals("Doctor")) {
                     JOptionPane.showMessageDialog(null, "Welcome, Doctor!");
                     this.setVisible(false);
-                    DoctorHomeP doctorHome = new DoctorHomeP();
+                    int doctorID = rs.getInt("DoctorID");
+                    DoctorHomeP doctorHome = new DoctorHomeP(doctorID);
                     doctorHome.setVisible(true); // Show Doctor's homepage
                 } else if (role.equals("Assistant")) {
                     JOptionPane.showMessageDialog(null, "Welcome, Assistant!");
