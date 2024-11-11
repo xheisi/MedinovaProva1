@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DataBase {
-    private Connection connection;
+    private  Connection connection;
     
     // Method to establish connection
     public Connection getConnection() {
